@@ -1,0 +1,14 @@
+{% extends "recruitment/base.html" %}
+{% block title %}Delete job{% endblock %}
+{% block content %}
+<article>
+  <h2>Delete &ldquo;{{ job.title }}&rdquo;?</h2>
+  <p><strong>This also deletes all applications for this job and cannot be undone.</strong>
+     Consider closing the job instead.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="contrast">Yes, delete</button>
+    <a href="{% url 'recruitment:job_manage' %}" role="button" class="secondary outline">Cancel</a>
+  </form>
+</article>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "recruitment/base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block content %}
+<article>
+  <header>
+    <h2>{{ job.title }}</h2>
+    <p>
+      {{ job.company_name }} &middot; {{ job.get_job_type_display }} &middot;
+      {% if job.is_remote %}Remote{% else %}{{ job.location|default:"-" }}{% endif %}
+      {% if job.status != "open" %}&middot; <mark>{{ job.get_status_display }}</mark>{% endif %}
+    </p>
+  </header>
+
+  <p>
+    <strong>Experience:</strong> {{ job.min_experience_years }}+ years
+    {% if job.deadline %}&middot; <strong>Apply by:</strong> {{ job.deadline|date:"M d, Y" }}{% endif %}
+  </p>
+  <p>{% for skill in job.required_skills %}<kbd>{{ skill }}</kbd> {% endfor %}</p>
+  <div>{{ job.description|linebreaks }}</div>
+
+  <footer>
+    {% if user.is_authenticated and user.is_recruiter and job.recruiter_id == user.id %}
+      <a href="{% url 'recruitment:job_update' job.pk %}" role="button" class="secondary">Edit posting</a>
+      <a href="{% url 'recruitment:job_applicants' job.pk %}" role="button" class="outline">View applicants</a>
+    {% elif user.is_authenticated and user.is_candidate %}
+      {% if has_applied %}
+        <button disabled>Already applied</button>
+        <a href="{% url 'recruitment:my_applications' %}">View my applications</a>
+      {% elif job.is_accepting_applications %}
+        <a href="{% url 'recruitment:apply' job.pk %}" role="button">Apply now</a>
+      {% else %}
+        <button disabled>Applications closed</button>
+      {% endif %}
+    {% elif not user.is_authenticated %}
+      <a href="{% url 'recruitment:login' %}?next={{ request.path }}" role="button">Log in to apply</a>
+    {% endif %}
+  </footer>
+</article>
+{% endblock %}

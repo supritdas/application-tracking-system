@@ -1,0 +1,13 @@
+<tr id="job-{{ job.pk }}">
+  <td><a href="{{ job.get_absolute_url }}">{{ job.title }}</a></td>
+  <td>{{ job.get_status_display }}</td>
+  <td><a href="{% url 'recruitment:job_applicants' job.pk %}">{{ job.app_count }} applicant{{ job.app_count|pluralize }}</a></td>
+  <td>{{ job.created_at|date:"M d, Y" }}</td>
+  <td>
+    <a href="{% url 'recruitment:job_update' job.pk %}">Edit</a> &middot;
+    <a href="#" hx-post="{% url 'recruitment:job_toggle' job.pk %}" hx-target="#job-{{ job.pk }}" hx-swap="outerHTML">
+      {% if job.status == "open" %}Close{% elif job.status == "draft" %}Publish{% else %}Reopen{% endif %}
+    </a> &middot;
+    <a href="{% url 'recruitment:job_delete' job.pk %}">Delete</a>
+  </td>
+</tr>

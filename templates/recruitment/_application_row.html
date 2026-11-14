@@ -1,0 +1,23 @@
+<tr id="app-{{ app.pk }}">
+  <td>
+    {# Closed/draft jobs 404 for non-owners, so only link open ones #}
+    {% if app.job.status == "open" %}<a href="{{ app.job.get_absolute_url }}">{{ app.job.title }}</a>{% else %}{{ app.job.title }}{% endif %}
+    <br><small>{{ app.job.company_name }}</small>
+  </td>
+  <td>
+    <span class="badge badge-{{ app.status }}">{{ app.get_status_display }}</span>
+    {% for iv in app.interviews.all %}{% if iv.status == "scheduled" %}
+      <br><small>Interview: {{ iv.scheduled_at|date:"M d, H:i" }} &middot; {{ iv.get_mode_display }}
+      {% if iv.is_link %}&middot; <a href="{{ iv.location }}" target="_blank" rel="noopener noreferrer">Join</a>
+      {% elif iv.location %}&middot; {{ iv.location }}{% endif %}</small>
+    {% endif %}{% endfor %}
+  </td>
+  <td>{{ app.applied_at|date:"M d, Y" }}</td>
+  <td><a href="{% url 'recruitment:resume_download' app.resume_id %}" target="_blank" rel="noopener">{{ app.resume.original_filename }}</a></td>
+  <td>
+    {% if app.can_withdraw %}
+      <a href="#" hx-post="{% url 'recruitment:withdraw' app.pk %}" hx-confirm="Withdraw this application?"
+         hx-target="#app-{{ app.pk }}" hx-swap="outerHTML">Withdraw</a>
+    {% endif %}
+  </td>
+</tr>

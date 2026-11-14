@@ -1,0 +1,56 @@
+{% extends "recruitment/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Recruiter dashboard</h2>
+<div class="grid">
+  <article><small>Total applications</small><h3>{{ totals.total }}</h3></article>
+  <article><small>Last 30 days</small><h3>{{ totals.last_30 }}</h3></article>
+  <article><small>Avg match score</small><h3>{{ totals.avg_score|floatformat:0|default:"-" }}</h3></article>
+  <article><small>Strong matches (75+)</small><h3>{{ totals.strong }}</h3></article>
+</div>
+
+<div class="grid">
+  <article>
+    <header>Pipeline (current stage)</header>
+    {% if totals.total %}
+      {% for s in stages %}
+        <small>{{ s.label }} &middot; {{ s.count }}</small>
+        <progress value="{{ s.count }}" max="{{ totals.total }}"></progress>
+      {% endfor %}
+    {% else %}<p>No applications yet.</p>{% endif %}
+  </article>
+
+  <article>
+    <header>Upcoming interviews</header>
+    {% for iv in interviews %}
+      <p style="margin-bottom:.5rem">
+        <a href="{% url 'recruitment:application_detail' iv.application_id %}">{{ iv.application.candidate.get_full_name }}</a>
+        <br><small>{{ iv.application.job.title }} &middot; {{ iv.scheduled_at|date:"D M d, H:i" }}</small>
+      </p>
+    {% empty %}<p>Nothing scheduled.</p>{% endfor %}
+  </article>
+</div>
+
+<article>
+  <header>Jobs</header>
+  <figure><table>
+    <thead><tr><th>Job</th><th>Status</th><th>Applicants</th><th>New</th><th>Avg score</th></tr></thead>
+    <tbody>
+    {% for job in jobs %}
+      <tr>
+        <td><a href="{% url 'recruitment:job_applicants' job.pk %}">{{ job.title }}</a></td>
+        <td>{{ job.get_status_display }}</td><td>{{ job.n }}</td><td>{{ job.new }}</td>
+        <td>{{ job.avg|floatformat:0|default:"-" }}</td>
+      </tr>
+    {% empty %}<tr><td colspan="5">No jobs yet.</td></tr>{% endfor %}
+    </tbody>
+  </table></figure>
+</article>
+
+{% if gaps %}
+<article>
+  <header>Most common missing skills across applicants</header>
+  {% for skill, n in gaps %}<kbd>{{ skill }} &middot; {{ n }}</kbd> {% endfor %}
+</article>
+{% endif %}
+{% endblock %}

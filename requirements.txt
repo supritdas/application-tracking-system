@@ -1,0 +1,11 @@
+Django>=5.1,<5.2
+psycopg[binary]>=3.2          # PostgreSQL driver (psycopg 3)
+django-environ>=0.11          # .env configuration
+django-htmx>=1.19             # HTMX request helpers
+celery>=5.4                   # background tasks
+redis>=5.0                    # Celery broker client
+pypdf>=5.0                    # PDF text extraction
+cryptography>=42              # lets pypdf open AES-encrypted PDFs
+groq>=0.13                    # Groq API client
+whitenoise>=6.7               # static files
+gunicorn>=22.0                # production WSGI server

@@ -1,0 +1,14 @@
+{% extends "recruitment/base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<article style="max-width:480px;margin:auto">
+  <h2>Log in</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% include "recruitment/_form_fields.html" %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit">Log in</button>
+  </form>
+  <small>No account? <a href="{% url 'recruitment:register' %}">Sign up</a></small>
+</article>
+{% endblock %}

@@ -1,0 +1,50 @@
+/* Same selector Pico uses for its light theme, so these colors win (this file loads after Pico). */
+:root:not([data-theme="dark"]), [data-theme="light"] {
+  --pico-primary: #4f46e5;
+  --pico-primary-background: #4f46e5;
+  --pico-primary-hover: #4338ca;
+  --pico-primary-hover-background: #4338ca;
+  --pico-primary-focus: rgba(79, 70, 229, .25);
+  --pico-background-color: #f8fafc;
+}
+:root {
+  --pico-font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pico-border-radius: .7rem;
+}
+
+/* Navbar */
+.site-nav { border-bottom: 1px solid var(--pico-muted-border-color); background: #fff; }
+.brand { font-weight: 700; font-size: 1.25rem; color: var(--pico-primary); text-decoration: none; }
+
+/* Cards */
+article { box-shadow: 0 1px 3px rgba(15, 23, 42, .08); border: 1px solid var(--pico-muted-border-color); }
+.job-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.job-grid article { margin: 0; transition: transform .15s, box-shadow .15s; }
+.job-grid article:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(15, 23, 42, .12); }
+
+/* Hero banner for the job list page */
+.hero { text-align: center; padding: 2.5rem 1rem; margin-bottom: 1.5rem; color: #fff;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: var(--pico-border-radius); }
+.hero h1, .hero p { color: #fff; margin-bottom: .5rem; }
+
+/* Status badges and score pill */
+.badge { display: inline-block; padding: .15rem .65rem; border-radius: 999px; font-size: .8rem; font-weight: 600;
+  background: #e2e8f0; color: #334155; }
+.badge-applied { background: #dbeafe; color: #1e40af; }
+.badge-screening { background: #fef3c7; color: #92400e; }
+.badge-interview { background: #ede9fe; color: #5b21b6; }
+.badge-offer, .badge-hired { background: #dcfce7; color: #166534; }
+.badge-rejected { background: #fee2e2; color: #991b1b; }
+.score { display: inline-block; min-width: 2.6rem; text-align: center; padding: .15rem .5rem;
+  border-radius: .5rem; font-weight: 700; background: #e0e7ff; color: #3730a3; }
+.score.high { background: #dcfce7; color: #166534; }
+.score.low { background: #fee2e2; color: #991b1b; }
+
+/* Flash messages */
+.flash { padding: .75rem 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem; background: #e0e7ff; }
+.flash.success { background: #dcfce7; } .flash.error { background: #fee2e2; }
+
+footer.site-footer { text-align: center; color: var(--pico-muted-color); padding: 2rem 0; font-size: .9rem; }
+
+/* HTMX loading feedback */
+.htmx-request { opacity: .6; transition: opacity .2s; }

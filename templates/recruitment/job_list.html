@@ -1,0 +1,25 @@
+{% extends "recruitment/base.html" %}
+{% block title %}Open positions{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Find your next role</h1>
+  <p>Search open positions and apply in minutes.</p>
+</section>
+
+{# Any input change re-queries via HTMX and updates the URL #}
+<form hx-get="{% url 'recruitment:job_list' %}" hx-target="#job-results"
+      hx-trigger="input delay:400ms, change" hx-push-url="true">
+  <div class="grid">
+    <input type="search" name="q" placeholder="Title, company or skill..." value="{{ request.GET.q }}">
+    <select name="job_type">
+      <option value="">All types</option>
+      {% for value, label in job_types %}
+        <option value="{{ value }}" {% if request.GET.job_type == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <label><input type="checkbox" name="remote" value="1" {% if request.GET.remote == "1" %}checked{% endif %}> Remote only</label>
+  </div>
+</form>
+
+<div id="job-results">{% include "recruitment/_job_cards.html" %}</div>
+{% endblock %}

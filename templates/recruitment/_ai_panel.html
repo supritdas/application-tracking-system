@@ -1,0 +1,25 @@
+{# While scoring is in flight this element polls itself; the finished fragment has no hx-trigger, so polling stops. #}
+<article id="ai-panel"
+  {% if app.ai_status == "pending" or app.ai_status == "processing" %}
+    hx-get="{% url 'recruitment:ai_panel' app.pk %}" hx-trigger="every 3s" hx-swap="outerHTML"
+  {% endif %}>
+  <header>
+    <strong>AI assessment</strong>
+    {% if app.match_score is not None %} &middot; Match score: <strong>{{ app.match_score }}/100</strong>{% endif %}
+  </header>
+
+  {% if app.ai_status == "pending" or app.ai_status == "processing" %}
+    <p aria-busy="true">Analysing...</p>
+  {% else %}
+    {% if app.ai_status == "failed" %}
+      <p><mark>AI summary unavailable.</mark> <small>{{ app.ai_error }}</small> The score above is the skills/experience baseline.</p>
+    {% elif app.ai_summary %}<p>{{ app.ai_summary }}</p>{% endif %}
+    <p><small>Matched:</small> {% for s in app.matched_skills %}<kbd>{{ s }}</kbd> {% empty %}<small>none</small>{% endfor %}</p>
+    <p><small>Missing:</small> {% for s in app.missing_skills %}<mark>{{ s }}</mark> {% empty %}<small>none</small>{% endfor %}</p>
+    <footer>
+      <small>The score is an aid for triage, not a hiring decision.</small>
+      <a href="#" hx-post="{% url 'recruitment:application_rescore' app.pk %}" hx-target="#ai-panel" hx-swap="outerHTML"
+         hx-confirm="Re-run AI scoring? This uses one Groq call.">Re-score</a>
+    </footer>
+  {% endif %}
+</article>

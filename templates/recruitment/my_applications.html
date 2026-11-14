@@ -1,0 +1,16 @@
+{% extends "recruitment/base.html" %}
+{% block title %}My applications{% endblock %}
+{% block content %}
+<h2>My applications</h2>
+<figure>
+<table>
+  <thead><tr><th>Job</th><th>Status</th><th>Applied</th><th>Resume</th><th></th></tr></thead>
+  <tbody>
+    {% for app in applications %}{% include "recruitment/_application_row.html" %}
+    {% empty %}
+      <tr><td colspan="5">No applications yet. <a href="{% url 'recruitment:job_list' %}">Browse open jobs</a>.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</figure>
+{% endblock %}

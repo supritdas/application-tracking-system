@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TalentAI ATS{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+{# CSRF token is attached to every HTMX request #}
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<header class="site-nav">
+  <div class="container">
+    <nav>
+      <ul><li><a class="brand" href="{% url 'recruitment:job_list' %}">TalentAI ATS</a></li></ul>
+      <ul>
+        <li><a href="{% url 'recruitment:job_list' %}">Browse jobs</a></li>
+        {% if user.is_authenticated %}
+          {% if user.is_recruiter %}
+            <li><a href="{% url 'recruitment:dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'recruitment:job_manage' %}">My postings</a></li>
+          {% endif %}
+          {% if user.is_candidate %}<li><a href="{% url 'recruitment:my_applications' %}">My applications</a></li>{% endif %}
+          <li>
+            <form method="post" action="{% url 'recruitment:logout' %}" style="margin:0">
+              {% csrf_token %}<button class="secondary outline" style="margin:0">Log out ({{ user.first_name|default:user.email }})</button>
+            </form>
+          </li>
+        {% else %}
+          <li><a href="{% url 'recruitment:login' %}">Log in</a></li>
+          <li><a href="{% url 'recruitment:register' %}" role="button">Sign up</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  {% for message in messages %}<div class="flash {{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer">TalentAI ATS &middot; Hire smarter</footer>
+</body>
+</html>

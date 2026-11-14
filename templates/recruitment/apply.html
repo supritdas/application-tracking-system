@@ -1,0 +1,16 @@
+{% extends "recruitment/base.html" %}
+{% block title %}Apply &middot; {{ job.title }}{% endblock %}
+{% block content %}
+<article style="max-width:640px;margin:auto">
+  <header>
+    <hgroup><h2>Apply: {{ job.title }}</h2><p>{{ job.company_name }}</p></hgroup>
+  </header>
+  {# multipart is required for the file upload #}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include "recruitment/_form_fields.html" %}
+    <button type="submit">Submit application</button>
+    <a href="{{ job.get_absolute_url }}" role="button" class="secondary outline">Cancel</a>
+  </form>
+</article>
+{% endblock %}

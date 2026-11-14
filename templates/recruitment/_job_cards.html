@@ -1,0 +1,34 @@
+<div class="job-grid">
+{% for job in jobs %}
+<article>
+  <header><a href="{{ job.get_absolute_url }}"><strong>{{ job.title }}</strong></a></header>
+  <p>
+    {{ job.company_name }} &middot; {{ job.get_job_type_display }} &middot;
+    {% if job.is_remote %}Remote{% else %}{{ job.location|default:"Location not specified" }}{% endif %}
+  </p>
+  {% for skill in job.required_skills|slice:":6" %}<kbd>{{ skill }}</kbd> {% endfor %}
+</article>
+{% empty %}
+  <p>No jobs match your search.</p>
+{% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav>
+  <ul>
+    {% if page_obj.has_previous %}
+    <li><a href="?{{ query_string }}page={{ page_obj.previous_page_number }}"
+           hx-get="?{{ query_string }}page={{ page_obj.previous_page_number }}"
+           hx-target="#job-results" hx-push-url="true">&larr; Previous</a></li>
+    {% endif %}
+  </ul>
+  <ul><li>Page {{ page_obj.number }} of {{ paginator.num_pages }}</li></ul>
+  <ul>
+    {% if page_obj.has_next %}
+    <li><a href="?{{ query_string }}page={{ page_obj.next_page_number }}"
+           hx-get="?{{ query_string }}page={{ page_obj.next_page_number }}"
+           hx-target="#job-results" hx-push-url="true">Next &rarr;</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}

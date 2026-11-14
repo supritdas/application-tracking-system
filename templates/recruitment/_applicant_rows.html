@@ -1,0 +1,17 @@
+<figure><table>
+  <thead><tr><th>Candidate</th><th>Score</th><th>Status</th><th>Applied</th><th>Resume</th></tr></thead>
+  <tbody>
+  {% for app in applications %}{% include "recruitment/_applicant_row.html" %}
+  {% empty %}<tr><td colspan="5">No applicants match these filters.</td></tr>{% endfor %}
+  </tbody>
+</table></figure>
+
+{% if is_paginated %}
+<nav>
+  <ul>{% if page_obj.has_previous %}<li><a href="?{{ query_string }}page={{ page_obj.previous_page_number }}"
+      hx-get="?{{ query_string }}page={{ page_obj.previous_page_number }}" hx-target="#results" hx-push-url="true">&larr; Previous</a></li>{% endif %}</ul>
+  <ul><li>Page {{ page_obj.number }} of {{ paginator.num_pages }}</li></ul>
+  <ul>{% if page_obj.has_next %}<li><a href="?{{ query_string }}page={{ page_obj.next_page_number }}"
+      hx-get="?{{ query_string }}page={{ page_obj.next_page_number }}" hx-target="#results" hx-push-url="true">Next &rarr;</a></li>{% endif %}</ul>
+</nav>
+{% endif %}

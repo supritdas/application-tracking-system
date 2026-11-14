@@ -1,0 +1,19 @@
+{% extends "recruitment/base.html" %}
+{% block title %}My postings{% endblock %}
+{% block content %}
+<hgroup>
+  <h2>My job postings</h2>
+  <p>{{ user.company_name }}</p>
+</hgroup>
+<a href="{% url 'recruitment:job_create' %}" role="button">+ New job</a>
+
+<figure>
+<table>
+  <thead><tr><th>Title</th><th>Status</th><th>Applicants</th><th>Posted</th><th></th></tr></thead>
+  <tbody>
+    {% for job in jobs %}{% include "recruitment/_manage_row.html" %}
+    {% empty %}<tr><td colspan="5">You haven't posted any jobs yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</figure>
+{% endblock %}

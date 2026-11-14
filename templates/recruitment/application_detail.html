@@ -1,0 +1,76 @@
+{% extends "recruitment/base.html" %}
+{% block title %}{{ app.candidate.get_full_name }} &middot; {{ app.job.title }}{% endblock %}
+{% block content %}
+<a href="{% url 'recruitment:job_applicants' app.job_id %}">&larr; All applicants</a>
+<hgroup>
+  <h2>{{ app.candidate.get_full_name }} <span class="badge badge-{{ app.status }}">{{ app.get_status_display }}</span></h2>
+  <p>{{ app.candidate.email }}{% if app.candidate.phone %} &middot; {{ app.candidate.phone }}{% endif %} &middot; applied to <strong>{{ app.job.title }}</strong></p>
+</hgroup>
+
+<div class="grid">
+  <form method="post" action="{% url 'recruitment:application_status' app.pk %}">
+    {% csrf_token %}
+    <label>Status
+      <select name="status">
+        {% for v, label in app.Status.choices %}<option value="{{ v }}" {% if app.status == v %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </label>
+    <button type="submit" class="secondary">Update status</button>
+  </form>
+  <p><a role="button" class="outline" href="{% url 'recruitment:resume_download' app.resume_id %}" target="_blank" rel="noopener">Open resume PDF</a></p>
+</div>
+
+{% include "recruitment/_ai_panel.html" %}
+
+{% with p=app.resume.parsed_data %}
+{% if p %}
+<article>
+  <header><strong>Parsed resume</strong>{% if p.headline %} &middot; {{ p.headline }}{% endif %}</header>
+  {% if p.total_experience_years is not None %}<p>Total experience: <strong>{{ p.total_experience_years }} years</strong></p>{% endif %}
+  <p>{% for s in p.skills %}<kbd>{{ s }}</kbd> {% endfor %}</p>
+  <ul>{% for e in p.experience %}<li>{{ e.title }}{% if e.company %}, {{ e.company }}{% endif %} <small>({{ e.start_date }}&ndash;{{ e.end_date }})</small></li>{% endfor %}</ul>
+</article>
+{% elif app.resume.parse_status == "failed" %}
+<article><mark>Resume could not be parsed:</mark> {{ app.resume.parse_error }}. Open the PDF to review it manually.</article>
+{% endif %}
+{% endwith %}
+
+{% if app.cover_letter %}<article><header>Cover letter</header>{{ app.cover_letter|linebreaks }}</article>{% endif %}
+
+<article>
+  <header>Internal notes</header>
+  <form method="post" action="{% url 'recruitment:application_notes' app.pk %}">
+    {% csrf_token %}
+    <textarea name="recruiter_notes" rows="4" maxlength="5000">{{ app.recruiter_notes }}</textarea>
+    <button type="submit" class="secondary">Save notes</button>
+  </form>
+</article>
+
+<article>
+  <header>Interviews</header>
+  {% for iv in app.interviews.all %}
+    <p>
+      <strong>{{ iv.scheduled_at|date:"D M d, Y H:i" }}</strong> &middot; {{ iv.duration_minutes }} min &middot; {{ iv.get_mode_display }}
+      {% if iv.is_link %}&middot; <a href="{{ iv.location }}" target="_blank" rel="noopener noreferrer">link</a>{% elif iv.location %}&middot; {{ iv.location }}{% endif %}
+      &middot; <mark>{{ iv.get_status_display }}</mark>
+      {% if iv.notes %}<br><small>{{ iv.notes }}</small>{% endif %}
+      {% if iv.status == "scheduled" %}
+        <form method="post" action="{% url 'recruitment:interview_status' iv.pk %}" style="display:inline">
+          {% csrf_token %}
+          <button name="status" value="completed" class="outline secondary" style="padding:.1rem .6rem;width:auto">Mark done</button>
+          <button name="status" value="cancelled" class="outline contrast" style="padding:.1rem .6rem;width:auto">Cancel</button>
+        </form>
+      {% endif %}
+    </p>
+  {% empty %}<p>No interviews yet.</p>{% endfor %}
+
+  <details {% if interview_form.errors %}open{% endif %}>
+    <summary role="button" class="outline">Schedule interview</summary>
+    <form method="post">
+      {% csrf_token %}
+      {% include "recruitment/_form_fields.html" with form=interview_form %}
+      <button type="submit">Schedule</button>
+    </form>
+  </details>
+</article>
+{% endblock %}

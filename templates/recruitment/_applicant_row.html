@@ -1,0 +1,21 @@
+<tr id="app-{{ app.pk }}">
+  <td>
+    <a href="{% url 'recruitment:application_detail' app.pk %}">{{ app.candidate.get_full_name }}</a>
+    <br><small>{{ app.candidate.email }}</small>
+  </td>
+  <td>
+    {% if app.match_score is not None %}
+      <span class="score {% if app.match_score >= 75 %}high{% elif app.match_score < 40 %}low{% endif %}">{{ app.match_score }}</span>
+    {% else %}-{% endif %}
+    {% if app.ai_status == "pending" or app.ai_status == "processing" %}<br><small>scoring...</small>
+    {% elif app.ai_status == "failed" %}<br><small>AI incomplete</small>{% endif %}
+  </td>
+  <td>
+    <select name="status" style="margin:0" hx-post="{% url 'recruitment:application_status' app.pk %}"
+            hx-trigger="change" hx-target="#app-{{ app.pk }}" hx-swap="outerHTML">
+      {% for v, label in app.Status.choices %}<option value="{{ v }}" {% if app.status == v %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  </td>
+  <td>{{ app.applied_at|date:"M d" }}</td>
+  <td><a href="{% url 'recruitment:resume_download' app.resume_id %}" target="_blank" rel="noopener">PDF</a></td>
+</tr>

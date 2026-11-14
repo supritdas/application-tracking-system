@@ -1,0 +1,13 @@
+{% extends "recruitment/base.html" %}
+{% block title %}{% if object %}Edit{% else %}New{% endif %} job{% endblock %}
+{% block content %}
+<article style="max-width:760px;margin:auto">
+  <h2>{% if object %}Edit &ldquo;{{ object.title }}&rdquo;{% else %}Post a new job{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% include "recruitment/_form_fields.html" %}
+    <button type="submit">Save</button>
+    <a href="{% url 'recruitment:job_manage' %}" role="button" class="secondary outline">Cancel</a>
+  </form>
+</article>
+{% endblock %}
